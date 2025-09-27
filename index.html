@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Convite de Aniversário 🎉</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(to bottom right, #ffccff, #ccffff);
+      font-family: 'Comic Sans MS', cursive;
+      text-align: center;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #ff3399;
+      animation: pulse 2s infinite;
+    }
+
+    p {
+      font-size: 1.5em;
+      color: #333;
+      margin: 15px 0;
+    }
+
+    .foto-convite {
+      max-width: 300px;
+      width: 100%;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .foto-convite {
+        max-width: 80%;
+      }
+    }
+
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      margin-top: 30px;
+      background-color: #ff66cc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+
+    button:hover {
+      background-color: #ff3399;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="container">
+    <h1>🎂 Você está convidado! 🎉</h1>
+    <p>Venha comemorar o meu aniversário com muita alegria!</p>
+
+    <img class="foto-convite" src="foto-aniversariante.jpg" alt="Foto do aniversariante sorridente com chapéu de festa" aria-label="Foto do aniversariante">
+
+    <p><strong>Dia:</strong> 28 de setembro<br>
+       <strong>Hora:</strong> 16h<br>
+       <strong>Local:</strong> endereço: não sei 😊</p>
+
+    <button id="startBtn" aria-label="Clique para iniciar a festa com música e confetes!">Clique para começar a festa!</button>
+  </div>
+
+  <audio id="musica" loop>
+    <source src="musica-xuxa.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio HTML5.
+  </audio>
+
+  <script>
+    const audio = document.getElementById("musica");
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    const button = document.getElementById("startBtn");
+    let confettis = [];
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    const randomColor = () => {
+      const colors = ['#ff66cc', '#66ccff', '#ffff66', '#99ff99', '#ff9999'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    };
+
+    const createConfetti = () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 5 + 2,
+      color: randomColor()
+    });
+
+    const startConfetti = () => {
+      confettis = Array.from({ length: 150 }, createConfetti);
+      animateConfetti();
+    };
+
+    const animateConfetti = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettis.forEach((c, i) => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+        c.y += c.d;
+        if (c.y > canvas.height) confettis[i] = createConfetti();
+      });
+      requestAnimationFrame(animateConfetti);
+    };
+
+    const iniciarFesta = () => {
+      audio.play().catch(err => {
+        console.log("Erro ao iniciar áudio:", err);
+      });
+
+      button.style.display = "none";
+
+      const msg = document.createElement("p");
+      msg.textContent = "🎉 A festa começou! Aproveite! 🎶";
+      document.querySelector(".container").appendChild(msg);
+
+      startConfetti();
+    };
+window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+ button.addEventListener("click", iniciarFesta);
+  </script>
+</body>
+</html>
